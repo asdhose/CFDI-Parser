@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>CFDI XML Parser</title>
+    <script>
+        function selectFolder() {
+            var input = document.createElement("input");
+            input.type = "file";
+            input.webkitdirectory = true;  // Allows directory selection
+            input.onchange = function(event) {
+                var folderPath = event.target.files[0].webkitRelativePath.split("/")[0];  // Get the folder name
+                document.getElementById("folder_path").value = folderPath;
+            };
+            input.click();
+        }
+
+        function submitForm() {
+            var folderPath = document.getElementById("folder_path").value;
+            fetch("/", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ folder_path: folderPath })
+            }).then(response => response.json())
+              .then(data => alert(data.message));
+        }
+    </script>
+</head>
+<body>
+    <h2>Select Folder to Parse XML Files</h2>
+    <button onclick="selectFolder()">Browse Folder</button>
+    <input type="hidden" id="folder_path" name="folder_path">
+    <button onclick="submitForm()">Start Parsing</button>
+</body>
+</html>

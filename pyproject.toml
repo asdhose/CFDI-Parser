@@ -1,0 +1,16 @@
+[project]
+name = "cfdi-parser"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "lxml>=5.4.0",
+    "pandas>=2.2.3",
+    "pyarrow>=20.0.0",
+]
+
+[dependency-groups]
+dev = [
+    "ruff>=0.11.8",
+]
