@@ -119,11 +119,27 @@ def parse_cfdi(files_tipos_list):
 
         # Parse la raiz y sus valores
         comprobante_data = {}
-        tree = etree.parse(xml_file)
-        root = tree.getroot()
-        ns_cfdi = "{" + root.nsmap.get("cfdi") + "}"
+
+        try:
+            tree = etree.parse(xml_file)
+            root = tree.getroot()
+        except:
+            continue
+
         extract_xml_values(root, "", comprobante_data)
 
+        version = comprobante_data.get("Version", "None")
+
+        if version in ("4.0","3.3"):
+            version = ""
+        else:
+            continue
+        
+        if root.nsmap.get("cfdi") == None:
+            continue
+
+        ns_cfdi = "{" + root.nsmap.get("cfdi") + "}"
+        
         for referencia in ("Emisor", "Receptor", "Impuestos", "InformacionGlobal"):
             node = root.find(ns_cfdi + referencia)
             if node is not None:
@@ -139,12 +155,18 @@ def parse_cfdi(files_tipos_list):
             tfd = root.find(NS_TFD + TFD)
             if tfd is None:
                 tfd = root.find(TFD)
+        if complemento == None and tfd == None:
+            continue
+
         extract_xml_values(tfd, "TFD_", comprobante_data)
         UUID = comprobante_data["TFD_UUID"]
 
         # Eliminar elementos no deseados
-        for x in EXCLUIDOS:
-            del comprobante_data[x]
+        try:
+            for x in EXCLUIDOS:
+                del comprobante_data[x]
+        except:
+            True
 
         data_comprobante.append(comprobante_data.copy())
 

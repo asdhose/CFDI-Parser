@@ -43,8 +43,9 @@ if __name__ == "__main__":
     #num_cores = 8
     tipos = ("Comprobante", "Conceptos", "Traslados", "Retenciones", "Nominas")
 
-    # FOLDER_PATH = r"C:\Users\Jose\Documents\Development\CFDI Parser\Test_XMLs\Originales"
-    FOLDER_PATH = r"C:\Users\Jose\Documents\CFDI Sample"
+    #FOLDER_PATH = r"C:\Users\Jose\Documents\Development\CFDI Parser\Test_XMLs\Originales"
+    #FOLDER_PATH = r"C:\Users\Jose\Documents\CFDI Sample"
+    FOLDER_PATH = r"C:\Users\Jose\Documents\CFDI Sample2"
 
     xml_file_list = [
         os.path.join(FOLDER_PATH, file)
@@ -57,10 +58,18 @@ if __name__ == "__main__":
     #0: es la lista de archivos, 1: es tipos con un prefijo para el output
     split_list = split_parts(num_cores, 1 , tipos, xml_file_list)
 
+    '''
+    #Run in single process
+    for x in split_list:
+        parser.parse_cfdi(x)
+    '''
 
-
+    
+    #Run in parallel super fast and cool
+    
     with multiprocessing.Pool(num_cores) as pool:
         pool.map(parser.parse_cfdi, split_list)
+    
 
     for tipo in tipos:
         op.consolidate_files("Output/", tipo)
